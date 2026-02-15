@@ -181,15 +181,6 @@
         </div>
     </div>
 
-    <div id="page-notif" class="page">
-        <div class="auth-card">
-            <div class="setup-icon"><i class="fas fa-bell"></i></div>
-            <h2>ئاگادارکردنەوە</h2>
-            <p style="color: var(--text-dim); line-height: 1.6;">بۆ ئەوەی کاتی بانگەکانت بیرنەچێت، تکایە ڕێگە بدە نۆتفیکەیشنت بۆ بنێرین.</p>
-            <button class="btn-main" onclick="requestNotif()">ڕێپێدان و بەردەوامبوون</button>
-        </div>
-    </div>
-
     <div id="page-city" class="page">
         <div class="auth-card">
             <div class="logo-circle"></div>
@@ -240,12 +231,6 @@
                     <span>دۆخی تاریکی و ڕوونی</span>
                 </div>
             </div>
-            <div class="task-card" onclick="toggleSilent()">
-                <div class="task-info">
-                    <div id="silent-icon-box" class="task-icon-box"><i class="fas fa-volume-up"></i></div>
-                    <span id="silent-text">دەنگی بانگ: چالاکە</span>
-                </div>
-            </div>
             <div class="task-card" onclick="logout()" style="border-color: rgba(239, 68, 68, 0.2);">
                 <div class="task-info">
                     <div class="task-icon-box" style="color:#ef4444; background:rgba(239,68,68,0.1);"><i class="fas fa-power-off"></i></div>
@@ -279,8 +264,6 @@
     </div>
 </div>
 
-<audio id="azan-sound" src="https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/cb341bff06bda4aa30a23f275075656fafedb81f/rekar-karim-Athan.mp3"></audio>
-
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGq19FYyrNidTsbD71YugtqWSxu6CUk6W2QzfJMp6hpF7HPAwx2m4nHSdL-v__REOYkA/exec";
     const RAMADAN_START = new Date('2026-02-18');
@@ -288,52 +271,42 @@
     let currentViewingDay = 1;
     let userTasks = {}; 
 
-    // زیادکردنی Service Worker بۆ ئەوەی وەک ئەپ بناسرێت
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').then(reg => {
-                console.log('SW Registered');
-            }).catch(err => console.log('SW Fail', err));
-        });
-    }
-
     const ramadanMaghribData = {
-        1: { Qaladiza: "17:51", Sulaymaniyah: "17:58" },
-        2: { Qaladiza: "17:52", Sulaymaniyah: "17:59" },
-        3: { Qaladiza: "17:53", Sulaymaniyah: "18:00" },
-        4: { Qaladiza: "17:54", Sulaymaniyah: "18:01" },
-        5: { Qaladiza: "17:55", Sulaymaniyah: "18:02" },
-        6: { Qaladiza: "17:56", Sulaymaniyah: "18:03" },
-        7: { Qaladiza: "17:57", Sulaymaniyah: "18:04" },
-        8: { Qaladiza: "17:58", Sulaymaniyah: "18:05" },
-        9: { Qaladiza: "17:59", Sulaymaniyah: "18:06" },
-        10: { Qaladiza: "18:00", Sulaymaniyah: "18:07" },
-        11: { Qaladiza: "18:01", Sulaymaniyah: "18:08" },
-        12: { Qaladiza: "18:01", Sulaymaniyah: "18:09" },
-        13: { Qaladiza: "18:02", Sulaymaniyah: "18:10" },
-        14: { Qaladiza: "18:03", Sulaymaniyah: "18:11" },
-        15: { Qaladiza: "18:04", Sulaymaniyah: "18:12" },
-        16: { Qaladiza: "18:05", Sulaymaniyah: "18:13" },
-        17: { Qaladiza: "18:06", Sulaymaniyah: "18:14" },
-        18: { Qaladiza: "18:07", Sulaymaniyah: "18:15" },
-        19: { Qaladiza: "18:08", Sulaymaniyah: "18:16" },
-        20: { Qaladiza: "18:09", Sulaymaniyah: "18:17" },
-        21: { Qaladiza: "18:10", Sulaymaniyah: "18:18" },
-        22: { Qaladiza: "18:10", Sulaymaniyah: "18:19" },
-        23: { Qaladiza: "18:11", Sulaymaniyah: "18:19" },
-        24: { Qaladiza: "18:12", Sulaymaniyah: "18:20" },
-        25: { Qaladiza: "18:13", Sulaymaniyah: "18:21" },
-        26: { Qaladiza: "18:14", Sulaymaniyah: "18:22" },
-        27: { Qaladiza: "18:15", Sulaymaniyah: "18:23" },
-        28: { Qaladiza: "18:15", Sulaymaniyah: "18:24" },
-        29: { Qaladiza: "18:16", Sulaymaniyah: "18:25" },
-        30: { Qaladiza: "18:17", Sulaymaniyah: "18:26" }
+        1: { Qaladiza: "05:51", Sulaymaniyah: "05:58" },
+        2: { Qaladiza: "05:52", Sulaymaniyah: "05:59" },
+        3: { Qaladiza: "05:53", Sulaymaniyah: "06:00" },
+        4: { Qaladiza: "05:54", Sulaymaniyah: "06:01" },
+        5: { Qaladiza: "05:55", Sulaymaniyah: "06:02" },
+        6: { Qaladiza: "05:56", Sulaymaniyah: "06:03" },
+        7: { Qaladiza: "05:57", Sulaymaniyah: "06:04" },
+        8: { Qaladiza: "05:58", Sulaymaniyah: "06:05" },
+        9: { Qaladiza: "05:59", Sulaymaniyah: "06:06" },
+        10: { Qaladiza: "06:00", Sulaymaniyah: "06:07" },
+        11: { Qaladiza: "06:01", Sulaymaniyah: "06:08" },
+        12: { Qaladiza: "06:01", Sulaymaniyah: "06:09" },
+        13: { Qaladiza: "06:02", Sulaymaniyah: "06:10" },
+        14: { Qaladiza: "06:03", Sulaymaniyah: "06:11" },
+        15: { Qaladiza: "06:04", Sulaymaniyah: "06:12" },
+        16: { Qaladiza: "06:05", Sulaymaniyah: "06:13" },
+        17: { Qaladiza: "06:06", Sulaymaniyah: "06:14" },
+        18: { Qaladiza: "06:07", Sulaymaniyah: "06:15" },
+        19: { Qaladiza: "06:08", Sulaymaniyah: "06:16" },
+        20: { Qaladiza: "06:09", Sulaymaniyah: "06:17" },
+        21: { Qaladiza: "06:10", Sulaymaniyah: "06:18" },
+        22: { Qaladiza: "06:10", Sulaymaniyah: "06:19" },
+        23: { Qaladiza: "06:11", Sulaymaniyah: "06:19" },
+        24: { Qaladiza: "06:12", Sulaymaniyah: "06:20" },
+        25: { Qaladiza: "06:13", Sulaymaniyah: "06:21" },
+        26: { Qaladiza: "06:14", Sulaymaniyah: "06:22" },
+        27: { Qaladiza: "06:15", Sulaymaniyah: "06:23" },
+        28: { Qaladiza: "06:15", Sulaymaniyah: "06:24" },
+        29: { Qaladiza: "06:16", Sulaymaniyah: "06:25" },
+        30: { Qaladiza: "06:17", Sulaymaniyah: "06:26" }
     };
 
     window.onload = () => {
         const theme = localStorage.getItem('theme') || 'dark';
         applyTheme(theme);
-        updateSilentUI();
         
         if(localStorage.getItem('user_name')) {
             userTasks = JSON.parse(localStorage.getItem('user_tasks') || '{}');
@@ -344,54 +317,10 @@
             document.getElementById('setting-city').value = localStorage.getItem('user_city') || 'None';
             showTab('home', document.querySelector('.nav-link'));
             document.getElementById('bottom-nav').style.display = 'flex';
-            
-            startNotificationTimer();
         } else {
             nextPage('page-login');
         }
     };
-
-    function startNotificationTimer() {
-        setInterval(() => {
-            const now = new Date();
-            const h = now.getHours();
-            const m = now.getMinutes();
-            const currentTimeStr = `${h}:${m.toString().padStart(2, '0')}`;
-            
-            const today = Math.ceil((now - RAMADAN_START) / (1000*60*60*24)) + 1;
-            if (today >= 1 && today <= 30) {
-                const times = calculatePrayerTimes(today);
-                Object.entries(times).forEach(([prayer, time]) => {
-                    if (time && time === currentTimeStr && now.getSeconds() === 0) {
-                        sendNotification(prayer);
-                    }
-                });
-            }
-        }, 1000);
-    }
-
-    function sendNotification(prayerName) {
-        const city = localStorage.getItem('user_city');
-        const title = "کاتی بانگ";
-        const body = `ئێستا کاتی بانگی ${prayerName}ە بە کاتی ${city}`;
-        
-        // ناردن لە ڕێگەی سێرڤس وۆرکەرەوە بۆ ئەوەی لە دەرەوەش ئیش بکات
-        if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.ready.then(registration => {
-                registration.showNotification(title, {
-                    body: body,
-                    icon: "https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/891e5ac114ed5cd1d425ed0f3b49870899300871/35B01A27-1264-471B-819B-9432D0221644.png",
-                    badge: "https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/891e5ac114ed5cd1d425ed0f3b49870899300871/35B01A27-1264-471B-819B-9432D0221644.png",
-                    vibrate: [200, 100, 200]
-                });
-            });
-        }
-
-        if (localStorage.getItem('silent_mode') !== 'true') {
-            const audio = document.getElementById('azan-sound');
-            audio.play().catch(e => console.log("Audio play failed"));
-        }
-    }
 
     function changeUserCity(val) {
         localStorage.setItem('user_city', val);
@@ -429,7 +358,7 @@
                 userTasks = res.savedTasks || {};
                 
                 if(res.isNewUser) {
-                    nextPage('page-notif');
+                    nextPage('page-city');
                 } else {
                     location.reload();
                 }
@@ -495,7 +424,7 @@
                         <div class="task-icon-box"><i class="fas ${t.i}"></i></div>
                         <div>
                             <span style="font-weight:600;">${t.n === 'ڕۆژوو' ? 'گرتنی ڕۆژوو' : 'نوێژی ' + t.n}</span>
-                            ${timeStr ? `<span class="prayer-time">کاتی بانگ: ${timeStr}</span>` : ''}
+                            ${timeStr ? `<span class="prayer-time">کاتی بانگ: ${timeStr} ئێوارە</span>` : ''}
                         </div>
                     </div>
                     <div class="check-circle">${isDone ? '<i class="fas fa-check"></i>' : ''}</div>
@@ -503,26 +432,10 @@
         });
     }
 
-    function toggleSilent() {
-        const isSilent = localStorage.getItem('silent_mode') === 'true';
-        localStorage.setItem('silent_mode', !isSilent);
-        updateSilentUI();
-    }
-
-    function updateSilentUI() {
-        const isSilent = localStorage.getItem('silent_mode') === 'true';
-        document.getElementById('silent-text').innerText = isSilent ? "دەنگی بانگ: بێدەنگ" : "دەنگی بانگ: چالاکە";
-        document.getElementById('silent-icon-box').innerHTML = isSilent ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-    }
-
     function logout() { if(confirm("ئایا دڵنیایت دەچیتە دەرەوە؟")) { localStorage.clear(); window.location.reload(); } }
     function nextPage(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-    }
-
-    function requestNotif() { 
-        Notification.requestPermission().then(permission => { nextPage('page-city'); });
     }
 
     async function finishSetup() {
