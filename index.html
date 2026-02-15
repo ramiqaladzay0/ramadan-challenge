@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title> Ramadan Challenge </title>
     
+    <link rel="manifest" href="manifest.json">
+    
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/891e5ac114ed5cd1d425ed0f3b49870899300871/35B01A27-1264-471B-819B-9432D0221644.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/891e5ac114ed5cd1d425ed0f3b49870899300871/35B01A27-1264-471B-819B-9432D0221644.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -168,7 +170,7 @@
         <div class="auth-card">
             <div class="logo-circle"></div>
             <h2>بەخێربێیت</h2>
-            <p style="color: var(--text-dim);">زانیارییەکانت بنوسە بۆ دەستپێکردن</p>
+            <p style="color: var(--text-dim);">داخڵ ببە بۆ ئەوەی زانیاریەکانت بمێننەوە، دەست پێ بکە</p>
             <input type="text" id="reg-name" placeholder="ناوی یان یوزەرنەیم ">
             <div class="input-group">
                 <input type="password" id="reg-pass" placeholder="پاسۆرد">
@@ -193,7 +195,7 @@
             <div class="logo-circle"></div>
             <h2>شارەکەت هەڵبژێرە</h2>
             <select id="reg-city">
-                <option value="None">نەن</option>
+                <option value="None">None</option>
                 <option value="Sulaymaniyah">سلێمانی</option>
                 <option value="Qaladiza">قەڵادزێ</option>
             </select>
@@ -226,7 +228,7 @@
                 <div class="task-info" style="width: 100%;">
                     <div class="task-icon-box"><i class="fas fa-location-dot"></i></div>
                     <select id="setting-city" style="margin: 0; padding: 5px; border: none; background: none;" onchange="changeUserCity(this.value)">
-                        <option value="None">نەن</option>
+                        <option value="None">None</option>
                         <option value="Sulaymaniyah">سلێمانی</option>
                         <option value="Qaladiza">قەڵادزێ</option>
                     </select>
@@ -285,6 +287,15 @@
     let activeTaskId = null;
     let currentViewingDay = 1;
     let userTasks = {}; 
+
+    // زیادکردنی Service Worker بۆ ئەوەی وەک ئەپ بناسرێت
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                console.log('SW Registered');
+            }).catch(err => console.log('SW Fail', err));
+        });
+    }
 
     const ramadanMaghribData = {
         1: { Qaladiza: "17:51", Sulaymaniyah: "17:58" },
@@ -360,14 +371,25 @@
     }
 
     function sendNotification(prayerName) {
-        if (Notification.permission === "granted") {
-            new Notification("کاتی بانگ", {
-                body: `ئێستا کاتی بانگی ${prayerName}ە بە کاتی ${localStorage.getItem('user_city')}`,
-                icon: "https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/891e5ac114ed5cd1d425ed0f3b49870899300871/35B01A27-1264-471B-819B-9432D0221644.png"
+        const city = localStorage.getItem('user_city');
+        const title = "کاتی بانگ";
+        const body = `ئێستا کاتی بانگی ${prayerName}ە بە کاتی ${city}`;
+        
+        // ناردن لە ڕێگەی سێرڤس وۆرکەرەوە بۆ ئەوەی لە دەرەوەش ئیش بکات
+        if (Notification.permission === "granted" && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(title, {
+                    body: body,
+                    icon: "https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/891e5ac114ed5cd1d425ed0f3b49870899300871/35B01A27-1264-471B-819B-9432D0221644.png",
+                    badge: "https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/891e5ac114ed5cd1d425ed0f3b49870899300871/35B01A27-1264-471B-819B-9432D0221644.png",
+                    vibrate: [200, 100, 200]
+                });
             });
         }
+
         if (localStorage.getItem('silent_mode') !== 'true') {
-            document.getElementById('azan-sound').play();
+            const audio = document.getElementById('azan-sound');
+            audio.play().catch(e => console.log("Audio play failed"));
         }
     }
 
