@@ -1,1 +1,536 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title> Ramadan Challenge </title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/cb341bff06bda4aa30a23f275075656fafedb81f/IMG_3004-removebg-preview.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/cb341bff06bda4aa30a23f275075656fafedb81f/IMG_3004-removebg-preview.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ramadan">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #d4af37;
+            --bg: #0b0f1a;
+            --card-bg: rgba(0, 0, 0, 0.6);
+            --border: rgba(255, 255, 255, 0.15);
+            --text: #ffffff;
+            --text-dim: #cbd5e1;
+        }
+
+        .light-mode {
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --border: rgba(0, 0, 0, 0.1);
+            --text: #0f172a;
+            --text-dim: #64748b;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/cb341bff06bda4aa30a23f275075656fafedb81f/90746D5C-7527-48A7-9691-83BC6ED51915.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 430px; margin: 0 auto; padding: 25px; min-height: 100vh; backdrop-filter: blur(2px); }
+
+        .page { display: none; animation: slideUp 0.5s ease-out; }
+        .page.active { display: block; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .auth-card { margin-top: 60px; text-align: center; }
+
+        .logo-circle {
+            width: 100px; height: 100px;
+            background: url('https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/cb341bff06bda4aa30a23f275075656fafedb81f/IMG_3004-removebg-preview.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0 auto 30px;
+            filter: drop-shadow(0 10px 15px rgba(212, 175, 55, 0.4));
+        }
+
+        .input-group { position: relative; width: 100%; }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-dim); }
+
+        input, select {
+            width: 100%; padding: 18px; margin: 12px 0; border-radius: 16px;
+            border: 1px solid var(--border); background: var(--card-bg);
+            color: var(--text); font-size: 16px; outline: none; transition: 0.3s;
+            box-sizing: border-box; backdrop-filter: blur(10px);
+        }
+        input:focus { border-color: var(--primary); background: rgba(212, 175, 55, 0.1); }
+
+        .btn-main {
+            width: 100%; padding: 18px; background: var(--primary); color: #000;
+            border: none; border-radius: 18px; font-weight: 700; font-size: 16px;
+            cursor: pointer; margin-top: 20px; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .btn-sub {
+            background: transparent; border: 1px solid var(--primary); color: var(--primary); margin-top: 10px;
+        }
+        .btn-main:active { transform: scale(0.97); }
+        .btn-main:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .header-section { margin-bottom: 25px; }
+        
+        .hint-box {
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px dashed var(--primary);
+            padding: 12px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            text-align: center;
+            display: flex; align-items: center; gap: 10px; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .day-switcher { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; background: var(--card-bg); padding: 10px 15px; border-radius: 15px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .day-switcher i { cursor: pointer; padding: 10px; color: var(--primary); transition: 0.3s; }
+        .day-switcher i:active { transform: scale(0.8); }
+
+        .task-list { display: grid; gap: 12px; padding-bottom: 120px; }
+        .task-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 18px;
+            border-radius: 22px;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        .task-card.done { background: rgba(212, 175, 55, 0.15); border-color: var(--primary); }
+        .task-info { display: flex; align-items: center; gap: 15px; }
+        .task-icon-box {
+            width: 42px; height: 42px; border-radius: 12px;
+            background: rgba(212, 175, 55, 0.2);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary); font-size: 16px;
+        }
+        .prayer-time { font-size: 12px; color: var(--text-dim); display: block; margin-top: 2px; font-weight: 400; }
+        .check-circle {
+            width: 26px; height: 26px; border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; color: transparent; transition: 0.3s;
+        }
+        .done .check-circle { background: var(--primary); border-color: var(--primary); color: #000; }
+
+        .social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 30px; }
+        .social-item {
+            aspect-ratio: 1; border-radius: 18px; background: var(--card-bg);
+            border: 1px solid var(--border); display: flex; align-items: center;
+            justify-content: center; font-size: 22px; text-decoration: none; color: var(--text);
+            transition: 0.3s; backdrop-filter: blur(10px);
+        }
+
+        .nav-wrapper { position: fixed; bottom: 30px; left: 0; width: 100%; display: flex; justify-content: center; pointer-events: none; z-index: 100; }
+        .nav-container {
+            pointer-events: auto; background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(25px); padding: 8px; border-radius: 28px;
+            border: 1px solid var(--border); display: flex; gap: 5px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .nav-link { padding: 12px 25px; border-radius: 22px; color: var(--text-dim); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.3s; }
+        .nav-link.active { background: var(--primary); color: #000; }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-box { background: #0b0f1a; padding: 30px; border-radius: 32px; width: 85%; max-width: 340px; text-align: center; border: 1px solid var(--border); }
+        .setup-icon { font-size: 50px; color: var(--primary); margin-bottom: 20px; }
+        
+        #loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; align-items: center; justify-content: center; color: white; flex-direction: column; }
+    </style>
+</head>
+<body class="dark-mode">
+
+<div id="loading-overlay">
+    <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary);"></i>
+    <p style="margin-top: 15px;">تکایە چاوەڕێ بکە...</p>
+</div>
+
+<div class="container">
+    <div id="page-login" class="page">
+        <div class="auth-card">
+            <div class="logo-circle"></div>
+            <h2>بەخێربێیت</h2>
+            <p style="color: var(--text-dim);">زانیارییەکانت بنوسە بۆ دەستپێکردن</p>
+            <input type="text" id="reg-name" placeholder="ناوی یان یوزەرنەیم ">
+            <div class="input-group">
+                <input type="password" id="reg-pass" placeholder="پاسۆرد">
+                <i class="fas fa-eye" id="togglePass" onclick="togglePassword()"></i>
+            </div>
+            <button class="btn-main" id="auth-btn" onclick="startAuth('signin')">چونەژورەوە </button>
+            <button class="btn-main btn-sub" onclick="startAuth('signup')">دروستکردنی ئەکاونت</button>
+        </div>
+    </div>
+
+    <div id="page-notif" class="page">
+        <div class="auth-card">
+            <div class="setup-icon"><i class="fas fa-bell"></i></div>
+            <h2>ئاگادارکردنەوە</h2>
+            <p style="color: var(--text-dim); line-height: 1.6;">بۆ ئەوەی کاتی بانگەکانت بیرنەچێت، تکایە ڕێگە بدە نۆتفیکەیشنت بۆ بنێرین.</p>
+            <button class="btn-main" onclick="requestNotif()">ڕێپێدان و بەردەوامبوون</button>
+        </div>
+    </div>
+
+    <div id="page-city" class="page">
+        <div class="auth-card">
+            <div class="logo-circle"></div>
+            <h2>شارەکەت هەڵبژێرە</h2>
+            <select id="reg-city">
+                <option value="None">نەن</option>
+                <option value="Sulaymaniyah">سلێمانی</option>
+                <option value="Qaladiza">قەڵادزێ</option>
+            </select>
+            <button class="btn-main" onclick="finishSetup()">تەواوکردنی ڕێکخستن</button>
+        </div>
+    </div>
+
+    <div id="page-home" class="page">
+        <div class="header-section">
+            <p id="user-display" style="margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);"></p>
+            <div class="day-switcher">
+                <i class="fas fa-chevron-right" onclick="changeDay(-1)"></i>
+                <h2 id="ramadan-day-text" style="font-size: 18px; margin:0;">ڕۆژی ١ی ڕەمەزان</h2>
+                <i class="fas fa-chevron-left" onclick="changeDay(1)"></i>
+            </div>
+        </div>
+
+        <div class="hint-box">
+            <i class="fas fa-check-double"></i>
+            <span>هەر پەرستشێکت ئەنجامدا سەحی لێ بدەیت، هەنگاوێکە بەرەو بەهەشت بڕۆ. ✨</span>
+        </div>
+
+        <div id="task-container" class="task-list"></div>
+    </div>
+
+    <div id="page-settings" class="page">
+        <div class="header-section"><h2>ڕێکخستن</h2><p>کۆنتڕۆڵ و گۆڕانکارییەکان</p></div>
+        <div class="task-list">
+            <div class="task-card">
+                <div class="task-info" style="width: 100%;">
+                    <div class="task-icon-box"><i class="fas fa-location-dot"></i></div>
+                    <select id="setting-city" style="margin: 0; padding: 5px; border: none; background: none;" onchange="changeUserCity(this.value)">
+                        <option value="None">نەن</option>
+                        <option value="Sulaymaniyah">سلێمانی</option>
+                        <option value="Qaladiza">قەڵادزێ</option>
+                    </select>
+                </div>
+            </div>
+            <div class="task-card" onclick="toggleTheme()">
+                <div class="task-info">
+                    <div class="task-icon-box"><i class="fas fa-circle-half-stroke"></i></div>
+                    <span>دۆخی تاریکی و ڕوونی</span>
+                </div>
+            </div>
+            <div class="task-card" onclick="toggleSilent()">
+                <div class="task-info">
+                    <div id="silent-icon-box" class="task-icon-box"><i class="fas fa-volume-up"></i></div>
+                    <span id="silent-text">دەنگی بانگ: چالاکە</span>
+                </div>
+            </div>
+            <div class="task-card" onclick="logout()" style="border-color: rgba(239, 68, 68, 0.2);">
+                <div class="task-info">
+                    <div class="task-icon-box" style="color:#ef4444; background:rgba(239,68,68,0.1);"><i class="fas fa-power-off"></i></div>
+                    <span style="color:#ef4444;">چوونەدەرەوە</span>
+                </div>
+            </div>
+        </div>
+        <div class="social-grid">
+            <a href="https://www.tiktok.com/@rx.ramiii" class="social-item" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.snapchat.com/add/cs.r4mi?share_id=uxaC9nFASm29UsWnuUbF-w&locale=en_IR@calendar=gregorian" class="social-item" target="_blank"><i class="fab fa-snapchat"></i></a>
+            <a href="https://www.instagram.com/rx.ramii" class="social-item" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/share/1AfKryYh4z/" class="social-item" target="_blank"><i class="fab fa-facebook"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="nav-wrapper">
+    <div id="bottom-nav" class="nav-container" style="display:none;">
+        <a href="javascript:void(0)" class="nav-link active" onclick="showTab('home', this)">چاڵنج</a>
+        <a href="javascript:void(0)" class="nav-link" onclick="showTab('settings', this)">ڕێکخستن</a>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-box">
+        <div style="font-size: 45px; margin-bottom: 20px;">✨</div>
+        <h3>تەواوت کرد؟</h3>
+        <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 25px;">پاداشتەکەت تۆمار دەکرێت، خودا پاداشتت بداتەوە  .</p>
+        <button class="btn-main" onclick="confirmTask()">بەڵێ، تەواوم کرد</button>
+        <button onclick="closeModal()" style="background:none; border:none; color:var(--text-dim); margin-top:15px; cursor:pointer;">پاشگەزبوونەوە</button>
+    </div>
+</div>
+
+<audio id="azan-sound" src="https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/cb341bff06bda4aa30a23f275075656fafedb81f/rekar-karim-Athan.mp3"></audio>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGq19FYyrNidTsbD71YugtqWSxu6CUk6W2QzfJMp6hpF7HPAwx2m4nHSdL-v__REOYkA/exec";
+    const RAMADAN_START = new Date('2026-02-18');
+    let activeTaskId = null;
+    let currentViewingDay = 1;
+    let userTasks = {}; 
+
+    const ramadanMaghribData = {
+        1: { Qaladiza: "17:51", Sulaymaniyah: "17:58" },
+        2: { Qaladiza: "17:52", Sulaymaniyah: "17:59" },
+        3: { Qaladiza: "17:53", Sulaymaniyah: "18:00" },
+        4: { Qaladiza: "17:54", Sulaymaniyah: "18:01" },
+        5: { Qaladiza: "17:55", Sulaymaniyah: "18:02" },
+        6: { Qaladiza: "17:56", Sulaymaniyah: "18:03" },
+        7: { Qaladiza: "17:57", Sulaymaniyah: "18:04" },
+        8: { Qaladiza: "17:58", Sulaymaniyah: "18:05" },
+        9: { Qaladiza: "17:59", Sulaymaniyah: "18:06" },
+        10: { Qaladiza: "18:00", Sulaymaniyah: "18:07" },
+        11: { Qaladiza: "18:01", Sulaymaniyah: "18:08" },
+        12: { Qaladiza: "18:01", Sulaymaniyah: "18:09" },
+        13: { Qaladiza: "18:02", Sulaymaniyah: "18:10" },
+        14: { Qaladiza: "18:03", Sulaymaniyah: "18:11" },
+        15: { Qaladiza: "18:04", Sulaymaniyah: "18:12" },
+        16: { Qaladiza: "18:05", Sulaymaniyah: "18:13" },
+        17: { Qaladiza: "18:06", Sulaymaniyah: "18:14" },
+        18: { Qaladiza: "18:07", Sulaymaniyah: "18:15" },
+        19: { Qaladiza: "18:08", Sulaymaniyah: "18:16" },
+        20: { Qaladiza: "18:09", Sulaymaniyah: "18:17" },
+        21: { Qaladiza: "18:10", Sulaymaniyah: "18:18" },
+        22: { Qaladiza: "18:10", Sulaymaniyah: "18:19" },
+        23: { Qaladiza: "18:11", Sulaymaniyah: "18:19" },
+        24: { Qaladiza: "18:12", Sulaymaniyah: "18:20" },
+        25: { Qaladiza: "18:13", Sulaymaniyah: "18:21" },
+        26: { Qaladiza: "18:14", Sulaymaniyah: "18:22" },
+        27: { Qaladiza: "18:15", Sulaymaniyah: "18:23" },
+        28: { Qaladiza: "18:15", Sulaymaniyah: "18:24" },
+        29: { Qaladiza: "18:16", Sulaymaniyah: "18:25" },
+        30: { Qaladiza: "18:17", Sulaymaniyah: "18:26" }
+    };
+
+    window.onload = () => {
+        const theme = localStorage.getItem('theme') || 'dark';
+        applyTheme(theme);
+        updateSilentUI();
+        
+        if(localStorage.getItem('user_name')) {
+            userTasks = JSON.parse(localStorage.getItem('user_tasks') || '{}');
+            const today = new Date();
+            const diff = Math.ceil((today - RAMADAN_START) / (1000*60*60*24)) + 1;
+            currentViewingDay = (diff >= 1 && diff <= 30) ? diff : 1;
+            
+            document.getElementById('setting-city').value = localStorage.getItem('user_city') || 'None';
+            showTab('home', document.querySelector('.nav-link'));
+            document.getElementById('bottom-nav').style.display = 'flex';
+            
+            startNotificationTimer();
+        } else {
+            nextPage('page-login');
+        }
+    };
+
+    function startNotificationTimer() {
+        setInterval(() => {
+            const now = new Date();
+            const h = now.getHours();
+            const m = now.getMinutes();
+            const currentTimeStr = `${h}:${m.toString().padStart(2, '0')}`;
+            
+            const today = Math.ceil((now - RAMADAN_START) / (1000*60*60*24)) + 1;
+            if (today >= 1 && today <= 30) {
+                const times = calculatePrayerTimes(today);
+                Object.entries(times).forEach(([prayer, time]) => {
+                    if (time && time === currentTimeStr && now.getSeconds() === 0) {
+                        sendNotification(prayer);
+                    }
+                });
+            }
+        }, 1000);
+    }
+
+    function sendNotification(prayerName) {
+        if (Notification.permission === "granted") {
+            new Notification("کاتی بانگ", {
+                body: `ئێستا کاتی بانگی ${prayerName}ە بە کاتی ${localStorage.getItem('user_city')}`,
+                icon: "https://raw.githubusercontent.com/ramiqaladzay0/ramadan-challenge/cb341bff06bda4aa30a23f275075656fafedb81f/IMG_3004-removebg-preview.png"
+            });
+        }
+        if (localStorage.getItem('silent_mode') !== 'true') {
+            document.getElementById('azan-sound').play();
+        }
+    }
+
+    function changeUserCity(val) {
+        localStorage.setItem('user_city', val);
+        renderChallenge();
+        syncData();
+    }
+
+    function togglePassword() {
+        const p = document.getElementById('reg-pass');
+        const i = document.getElementById('togglePass');
+        if(p.type === "password") { p.type = "text"; i.className = "fas fa-eye-slash"; }
+        else { p.type = "password"; i.className = "fas fa-eye"; }
+    }
+
+    async function startAuth(mode) {
+        const name = document.getElementById('reg-name').value.trim();
+        const pass = document.getElementById('reg-pass').value.trim();
+        if(!name || !pass) return alert("تکایە ناو و پاسۆرد بنوسە");
+        
+        document.getElementById('loading-overlay').style.display = 'flex';
+        
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'auth', userName: name, password: pass, mode: mode })
+            });
+            const res = await response.json();
+            document.getElementById('loading-overlay').style.display = 'none';
+
+            if(res.status === "success") {
+                localStorage.setItem('user_name', name);
+                localStorage.setItem('user_pass', pass);
+                localStorage.setItem('user_city', res.city || 'None');
+                localStorage.setItem('user_tasks', JSON.stringify(res.savedTasks || {}));
+                userTasks = res.savedTasks || {};
+                
+                if(res.isNewUser) {
+                    nextPage('page-notif');
+                } else {
+                    location.reload();
+                }
+            } else {
+                alert(res.message);
+            }
+        } catch (e) {
+            document.getElementById('loading-overlay').style.display = 'none';
+            alert("پەیوەندی سێرڤەر سەرکەوتوو نەبوو");
+        }
+    }
+
+    async function syncData() {
+        const name = localStorage.getItem('user_name');
+        const pass = localStorage.getItem('user_pass');
+        const city = localStorage.getItem('user_city');
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'sync', userName: name, password: pass, city: city, taskData: userTasks })
+            });
+        } catch (e) { console.error("Sync failed"); }
+    }
+
+    function changeDay(step) {
+        let newDay = currentViewingDay + step;
+        if(newDay >= 1 && newDay <= 30) {
+            currentViewingDay = newDay;
+            renderChallenge();
+        }
+    }
+
+    function calculatePrayerTimes(day) {
+        const city = localStorage.getItem('user_city');
+        if (city === "Qaladiza" || city === "Sulaymaniyah") {
+            const maghribTime = ramadanMaghribData[day][city];
+            return { "بەیانی": null, "نیوەڕۆ": null, "عەسر": null, "مەغریب": maghribTime, "عیشا": null };
+        } else {
+            return { "بەیانی": null, "نیوەڕۆ": null, "عەسر": null, "مەغریب": null, "عیشا": null };
+        }
+    }
+
+    function renderChallenge() {
+        document.getElementById('ramadan-day-text').innerText = `ڕۆژی ${currentViewingDay}ی ڕەمەزان`;
+        document.getElementById('user-display').innerText = "سڵاو، " + localStorage.getItem('user_name');
+        const currentTimes = calculatePrayerTimes(currentViewingDay);
+        const tasks = [
+            {n:"بەیانی", i:"fa-mosque"}, {n:"نیوەڕۆ", i:"fa-sun"}, 
+            {n:"عەسر", i:"fa-cloud-sun"}, {n:"مەغریب", i:"fa-moon"}, 
+            {n:"عیشا", i:"fa-star-and-crescent"}, {n:"ڕۆژوو", i:"fa-heart"}
+        ];
+        const container = document.getElementById('task-container');
+        container.innerHTML = "";
+
+        tasks.forEach(t => {
+            const id = `day${currentViewingDay}_${t.n}`;
+            const isDone = userTasks[id] === true;
+            const timeStr = currentTimes[t.n];
+            
+            container.innerHTML += `
+                <div class="task-card ${isDone ? 'done' : ''}" onclick="openModal('${id}', ${isDone})">
+                    <div class="task-info">
+                        <div class="task-icon-box"><i class="fas ${t.i}"></i></div>
+                        <div>
+                            <span style="font-weight:600;">${t.n === 'ڕۆژوو' ? 'گرتنی ڕۆژوو' : 'نوێژی ' + t.n}</span>
+                            ${timeStr ? `<span class="prayer-time">کاتی بانگ: ${timeStr}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="check-circle">${isDone ? '<i class="fas fa-check"></i>' : ''}</div>
+                </div>`;
+        });
+    }
+
+    function toggleSilent() {
+        const isSilent = localStorage.getItem('silent_mode') === 'true';
+        localStorage.setItem('silent_mode', !isSilent);
+        updateSilentUI();
+    }
+
+    function updateSilentUI() {
+        const isSilent = localStorage.getItem('silent_mode') === 'true';
+        document.getElementById('silent-text').innerText = isSilent ? "دەنگی بانگ: بێدەنگ" : "دەنگی بانگ: چالاکە";
+        document.getElementById('silent-icon-box').innerHTML = isSilent ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+    }
+
+    function logout() { if(confirm("ئایا دڵنیایت دەچیتە دەرەوە؟")) { localStorage.clear(); window.location.reload(); } }
+    function nextPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function requestNotif() { 
+        Notification.requestPermission().then(permission => { nextPage('page-city'); });
+    }
+
+    async function finishSetup() {
+        const city = document.getElementById('reg-city').value;
+        localStorage.setItem('user_city', city);
+        await syncData();
+        location.reload();
+    }
+
+    function showTab(tab, el) {
+        nextPage('page-' + tab);
+        if(tab === 'home') renderChallenge();
+        if(el) {
+            document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+        }
+    }
+
+    function openModal(id, done) { if(!done) { activeTaskId = id; document.getElementById('modal').style.display = 'flex'; } }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    function confirmTask() {
+        userTasks[activeTaskId] = true;
+        localStorage.setItem('user_tasks', JSON.stringify(userTasks));
+        syncData(); 
+        closeModal();
+        renderChallenge();
+    }
+
+    function applyTheme(t) { document.body.className = t + '-mode'; localStorage.setItem('theme', t); }
+    function toggleTheme() { applyTheme(document.body.classList.contains('light-mode') ? 'dark' : 'light'); }
+</script>
+</body>
+</html>
